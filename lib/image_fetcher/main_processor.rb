@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'fileutils'
+
 module ImageFetcher
   class MainProcessor
 
@@ -9,9 +11,14 @@ module ImageFetcher
     end
 
     def call
+      create_directory
     end
 
     private
+
+    def create_directory
+      FileUtils.mkdir_p(output_directory)
+    end
 
     attr_reader :urls, :output_directory
   end
