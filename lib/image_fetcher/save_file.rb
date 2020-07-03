@@ -16,7 +16,7 @@ module ImageFetcher
     def call
       # TODO: check wether file already exists:
       # TODO: there can be permission related and similar problems - catch them
-      File.open(filepath, 'w') { |file| file.puts(contents) }
+      File.open(filepath, 'w') { |file| file.write(contents) }
     end
 
     private
