@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
-require 'fileutils'
-
 module ImageFetcher
   class MainProcessor
+    def self.call(**args)
+      new(**args).call
+    end
 
     def initialize(urls:, output_directory:)
       @urls = urls
@@ -12,6 +13,9 @@ module ImageFetcher
 
     def call
       create_directory
+      urls.each do |url|
+        ImageFetchWorker.call(url: url, output_directory: output_directory)
+      end
     end
 
     private

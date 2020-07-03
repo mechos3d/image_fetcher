@@ -14,13 +14,16 @@ module ImageFetcher
     end
 
     def call
-      # TODO: check wether file already exists:
+      # TODO: check wether file already exists - do not overwite if it does.
       # TODO: there can be permission related and similar problems - catch them
       File.open(filepath, 'w') { |file| file.write(contents) }
     end
 
     private
 
+    # TODO: urls can have VERY long filenames in it - better
+    # to shorten the name itself here if needed:
+    # (uniqeness will still be provided by the MD5 hash)
     def filepath
       File.join(output_directory, filename)
     end

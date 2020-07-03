@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+require 'fileutils'
+require 'faraday'
+
 require_relative './image_fetcher.rb'
 require_relative './image_fetcher/save_file.rb'
 require_relative './image_fetcher/image_fetch_worker.rb'

@@ -11,6 +11,7 @@ RSpec.describe ImageFetcher::SaveFile do
   let(:output_directory) do
     # TODO: if this constant ImageFetcher::ROOT_DIR will not be needed in real code
     # - better to define it only for specs in 'spec_helper.rb' for example:
+    # and the same goes for other specs using it
     File.join(ImageFetcher::ROOT_DIR, 'tmp', 'image_fetcher_save_file_spec_out')
   end
   let(:contents) { 'foo' }

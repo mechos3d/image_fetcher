@@ -1,9 +1,11 @@
 # frozen_string_literal: true
 
-require 'faraday'
-
 module ImageFetcher
   class ImageFetchWorker
+    def self.call(**args)
+      new(**args).call
+    end
+
     def initialize(url:, output_directory:)
       @url              = url
       @output_directory = output_directory
