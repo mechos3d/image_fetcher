@@ -2,6 +2,7 @@
 
 require 'fileutils'
 require 'faraday'
+require 'concurrent'
 
 require_relative './image_fetcher.rb'
 require_relative './image_fetcher/save_file.rb'

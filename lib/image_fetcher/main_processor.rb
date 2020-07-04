@@ -14,9 +14,21 @@ module ImageFetcher
 
     def call
       create_directory
-      urls.each do |url|
-        ImageFetchWorker.call(url: url, output_directory: output_directory)
+
+      pool = Concurrent::ThreadPoolExecutor.new(
+         min_threads: 5,
+         max_threads: 50,
+         max_queue: 0
+      )
+
+      futures = urls.map do |url|
+        Concurrent::Future.new(executor: pool) do
+          ImageFetchWorker.call(url: url, output_directory: output_directory)
+        end
       end
+      futures.each { |future| future.execute }
+      # TODO: wrap "future.value / future.reason" in some consistent Result-object:
+      futures.map { |future| future.value || future.reason }
     end
 
     private
