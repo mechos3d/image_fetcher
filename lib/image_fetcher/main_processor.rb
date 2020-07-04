@@ -7,7 +7,8 @@ module ImageFetcher
     end
 
     def initialize(urls:, output_directory:)
-      @urls = urls
+      # TODO: add specs on this class' behavior when urls are not uniq:
+      @urls = urls.uniq
       @output_directory = output_directory
     end
 

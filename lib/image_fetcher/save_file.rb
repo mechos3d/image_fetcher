@@ -28,6 +28,7 @@ module ImageFetcher
       File.join(output_directory, filename)
     end
 
+    # TODO: need a spec on the 'uniqueness' behavior:
     def filename
       name = url.split('/').last
       [Digest::MD5.hexdigest(url), name].join('__')
