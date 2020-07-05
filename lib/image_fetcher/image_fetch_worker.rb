@@ -2,6 +2,8 @@
 
 module ImageFetcher
   class ImageFetchWorker
+    Result = Struct.new(:success, :url, :details, :error_code)
+
     def self.call(**args)
       new(**args).call
     end
@@ -12,18 +14,32 @@ module ImageFetcher
     end
 
     def call
-      conn = Faraday.new(url, request: { timeout: 5 })
-      response = conn.get
-      if response.success?
-        SaveFile.call(url: url,
-                      output_directory: output_directory,
-                      contents: response.body)
+      connection_ok, response = make_request
+
+      if connection_ok && response.success?
+        return(
+          SaveFile.call(url: url,
+                        output_directory: output_directory,
+                        contents: response.body)
+        )
       end
+
+      error_code = connection_ok ? :fail_response : :connection_error
+      Result.new(false, url, response, error_code)
     end
 
     private
 
     attr_reader :url, :output_directory
 
+    def make_request
+      conn = Faraday.new(url, request: { timeout: 5 }) do |faraday|
+        # NOTE: the default value for follow-redirects limit is 3
+        faraday.use ::FaradayMiddleware::FollowRedirects
+      end
+      [true, conn.get]
+    rescue Faraday::SSLError, Faraday::ConnectionFailed, Faraday::TimeoutError => e
+      [false, e]
+    end
   end
 end

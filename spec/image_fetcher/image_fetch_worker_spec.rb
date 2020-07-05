@@ -28,4 +28,44 @@ RSpec.describe ImageFetcher::ImageFetchWorker do
       )
     end
   end
+
+  [Faraday::SSLError, Faraday::ConnectionFailed, Faraday::TimeoutError].each do |error_class|
+    context "when #{error_class} is raised" do
+      before { stub_request(:get, url).to_raise(error_class) }
+
+      it "doesn't raise errors" do
+        expect { class_call }.not_to raise_error
+      end
+
+      it "returns Result with error details" do
+        result = class_call
+        aggregate_failures do
+          expect(result.success).to be false
+          expect(result.url).to eq(url)
+          expect(result.details).to be_a_kind_of(error_class)
+          expect(result.error_code).to eq(:connection_error)
+        end
+      end
+    end
+  end
+
+  # NOTE: behavior with codes 301, 302, 303 and 307 is not tested because
+  # it is covered by the FaradayMiddleware::FollowRedirects
+  [300, 400, 500].each do |stub_code|
+    context "when response code was #{stub_code} not successfull" do
+      before do
+        stub_request(:get, url).to_return(status: stub_code, body: 'stub_body', headers: {})
+      end
+
+      it "returns Result with error details" do
+        result = class_call
+        aggregate_failures do
+          expect(result.success).to be false
+          expect(result.url).to eq(url)
+          expect(result.details).to be_a_kind_of(Faraday::Response)
+          expect(result.error_code).to eq(:fail_response)
+        end
+      end
+    end
+  end
 end

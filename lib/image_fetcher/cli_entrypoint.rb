@@ -15,13 +15,15 @@ module ImageFetcher
 
       output_directory = File.absolute_path(argument)
 
-      # TODO: if given '--help' flag - return here before the ARGF or else it will block waiting for
+      # TODO: if given '--help' flag - return from the method here
+      # before the ARGF or else it will block waiting for
       # the input indefinitely
       urls = argf.readlines.map { |url_string| url_string.strip.chomp }
 
       MainProcessor.call(urls: urls, output_directory: output_directory)
 
-      # TODO: rescue 'Errno::ENOENT' and return some user-friendly error
+      # TODO: rescue 'Errno::ENOENT' (when there is no such directory)
+      # and return some user-friendly error
     end
 
     private

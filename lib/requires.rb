@@ -2,6 +2,7 @@
 
 require 'fileutils'
 require 'faraday'
+require 'faraday_middleware'
 require 'concurrent'
 
 require_relative './image_fetcher.rb'
