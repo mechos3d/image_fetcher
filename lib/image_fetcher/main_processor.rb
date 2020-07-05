@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# TODO: write to stderr on each error, but only not in test.
 module ImageFetcher
   class MainProcessor
     def self.call(**args)
@@ -27,8 +28,7 @@ module ImageFetcher
         end
       end
       futures.each { |future| future.execute }
-      # TODO: wrap "future.value / future.reason" in some consistent Result-object:
-      futures.map { |future| future.value || future.reason }
+      futures.map { |future| future.value! }
     end
 
     private

@@ -14,14 +14,17 @@ module ImageFetcher
 
     def call
       if File.exist?(filepath)
-        ::ImageFetcher::ImageFetchWorker::Result
-          .new(false, url, nil, :file_already_exists)
+        worker_class::Result.new(
+          false, url, nil, worker_class::ErrorCodes.file_already_exists
+        )
       else
         File.open(filepath, 'w') { |file| file.write(contents) }
       end
     end
 
     private
+
+    attr_reader :url, :output_directory, :contents
 
     # TODO: For usability it can be better to create a separate directory
     # for each domain and save files there.
@@ -39,6 +42,9 @@ module ImageFetcher
       [Digest::MD5.hexdigest(url), name].join('__')
     end
 
-    attr_reader :url, :output_directory, :contents
+    def worker_class
+      @worker_class ||= ::ImageFetcher::ImageFetchWorker
+    end
+
   end
 end

@@ -24,9 +24,10 @@ module ImageFetcher
         )
       end
 
-      # TODO: add enums for error_codes:
-      error_code = connection_ok ? :fail_response : :connection_error
+      error_code = connection_ok ? ErrorCodes.fail_response : ErrorCodes.connection_error
       Result.new(false, url, response, error_code)
+    rescue StandardError => e
+      Result.new(false, url, e, ErrorCodes.unhandled_exception)
     end
 
     private
