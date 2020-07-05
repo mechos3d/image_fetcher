@@ -13,19 +13,21 @@ module ImageFetcher
     end
 
     def call
-      if File.exist?(filepath)
-        worker_class::Result.new(
-          false, url, nil, worker_class::ErrorCodes.file_already_exists
-        )
-      else
-        File.open(filepath, 'w') { |file| file.write(contents) }
-      end
+      return(failed_result) if File.exist?(filepath)
+
+      File.open(filepath, 'w') { |file| file.write(contents) }
+      worker_class::Result.new(true, url, nil, nil)
     end
 
     private
 
     attr_reader :url, :output_directory, :contents
 
+    def failed_result
+      worker_class::Result.new(
+        false, url, nil, worker_class::ErrorCodes.file_already_exists
+      )
+    end
     # TODO: For usability it can be better to create a separate directory
     # for each domain and save files there.
 
@@ -45,6 +47,5 @@ module ImageFetcher
     def worker_class
       @worker_class ||= ::ImageFetcher::ImageFetchWorker
     end
-
   end
 end

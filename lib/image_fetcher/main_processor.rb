@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-# TODO: write to stderr on each error, but only not in test.
 module ImageFetcher
   class MainProcessor
     def self.call(**args)
@@ -28,14 +27,14 @@ module ImageFetcher
         end
       end
       futures.each { |future| future.execute }
-      futures.map { |future| future.value! }
+      futures.map { |future| future.value }
     end
 
     private
 
     def create_directory
       # TODO: check for FS permissions here.
-      # (what if the directory exists but our user doesn't have permissions for it)
+      # (what if the directory exists but current user doesn't have permissions for it)
       FileUtils.mkdir_p(output_directory)
     end
 

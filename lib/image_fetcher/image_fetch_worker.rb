@@ -27,6 +27,7 @@ module ImageFetcher
       error_code = connection_ok ? ErrorCodes.fail_response : ErrorCodes.connection_error
       Result.new(false, url, response, error_code)
     rescue StandardError => e
+      # TODO: can write to stderr from here but only using a Mutex
       Result.new(false, url, e, ErrorCodes.unhandled_exception)
     end
 
