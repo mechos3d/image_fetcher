@@ -10,7 +10,7 @@ RSpec.describe ImageFetcher::MainProcessor do
   let(:url1) { 'https://foo.com/foo.jpg' }
   let(:url2) { 'https://foo.com/bar.png' }
   let(:output_directory) do
-    File.join(ImageFetcher::ROOT_DIR, 'tmp', 'main_processor_spec_out')
+    File.join(ImageFetcher::APPLICATION_ROOT_DIR, 'tmp', 'main_processor_spec_out')
   end
 
   before { allow(ImageFetcher::ImageFetchWorker).to receive(:call) }
