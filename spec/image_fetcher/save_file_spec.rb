@@ -16,6 +16,7 @@ RSpec.describe ImageFetcher::SaveFile do
   end
   let(:contents) { 'foo' }
   let(:expected_filename) { '518206a31f04728335677bfd912faedb__dummy.jpg' }
+  let(:out_file_path) { File.join(output_directory, expected_filename) }
 
   before do
     FileUtils.mkdir_p(output_directory)
@@ -26,9 +27,26 @@ RSpec.describe ImageFetcher::SaveFile do
   it 'creates a file with right contents' do
     class_call
     aggregate_failures do
-      file = File.join(output_directory, expected_filename)
-      expect(File.exists?(file)).to be true
-      expect(File.read(file)).to eq(contents)
+      expect(File.exists?(out_file_path)).to be true
+      expect(File.read(out_file_path)).to eq(contents)
+    end
+  end
+
+  context 'when file with the same name already exists' do
+    before { FileUtils.touch(out_file_path) }
+
+    it "returns Result with error details" do
+      result = class_call
+      aggregate_failures do
+        expect(result.success).to be false
+        expect(result.url).to eq(url)
+        expect(result.details).to eq(nil)
+        expect(result.error_code).to eq(:file_already_exists)
+      end
+    end
+
+    it 'doesn\'t write to this file' do
+      expect { class_call }.not_to change { File.read(out_file_path) }.from('')
     end
   end
 

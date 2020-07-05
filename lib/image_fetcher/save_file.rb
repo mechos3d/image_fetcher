@@ -2,7 +2,6 @@
 
 module ImageFetcher
   class SaveFile
-
     def self.call(**args)
       new(**args).call
     end
@@ -14,18 +13,24 @@ module ImageFetcher
     end
 
     def call
-      # TODO: check wether file already exists - do not overwite if it does.
-      # TODO: there can be permission related and similar problems - catch them
-      File.open(filepath, 'w') { |file| file.write(contents) }
+      if File.exist?(filepath)
+        ::ImageFetcher::ImageFetchWorker::Result
+          .new(false, url, nil, :file_already_exists)
+      else
+        File.open(filepath, 'w') { |file| file.write(contents) }
+      end
     end
 
     private
+
+    # TODO: For usability it can be better to create a separate directory
+    # for each domain and save files there.
 
     # TODO: urls can have VERY long filenames in it - better
     # to shorten the name itself here if needed:
     # (uniqeness will still be provided by the MD5 hash)
     def filepath
-      File.join(output_directory, filename)
+      @filepath ||= File.join(output_directory, filename)
     end
 
     # TODO: need a spec on the 'uniqueness' behavior:

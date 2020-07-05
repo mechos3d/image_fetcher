@@ -34,6 +34,8 @@ module ImageFetcher
     private
 
     def create_directory
+      # TODO: check for FS permissions here.
+      # (what if the directory exists but our user doesn't have permissions for it)
       FileUtils.mkdir_p(output_directory)
     end
 
