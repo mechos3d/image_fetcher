@@ -3,7 +3,8 @@
 module ImageFetcher
   class ImageFetchWorker
     class ErrorCodes
-      CODES = [:fail_response, :connection_error, :file_already_exists, :unhandled_exception]
+      CODES = [:fail_response, :connection_error, :file_already_exists,
+               :unhandled_exception, :invalid_url].freeze
       private_constant :CODES
 
       class << self

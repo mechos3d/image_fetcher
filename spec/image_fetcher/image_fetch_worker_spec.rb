@@ -9,12 +9,12 @@ RSpec.describe ImageFetcher::ImageFetchWorker do
                         output_directory: output_directory).call
   end
 
-  before do
-    allow(ImageFetcher::SaveFile).to receive(:call)
-    stub_request(:get, url).to_return(status: 200, body: 'stub_body', headers: {})
-  end
-
   context 'when the request is successfull' do
+    before do
+      allow(ImageFetcher::SaveFile).to receive(:call)
+      stub_request(:get, url).to_return(status: 200, body: 'stub_body', headers: {})
+    end
+
     it "doesn't raise errors" do
       expect { class_call }.not_to raise_error
     end
@@ -65,6 +65,19 @@ RSpec.describe ImageFetcher::ImageFetchWorker do
           expect(result.details).to be_a_kind_of(Faraday::Response)
           expect(result.error_code).to eq(:fail_response)
         end
+      end
+    end
+  end
+
+  context 'when given invalid url' do
+    let(:url) { 'ttps://foo' }
+    it do
+      result = class_call
+      aggregate_failures do
+        expect(result.success).to be false
+        expect(result.url).to eq(url)
+        expect(result.details).to eq(nil)
+        expect(result.error_code).to eq(:invalid_url)
       end
     end
   end
