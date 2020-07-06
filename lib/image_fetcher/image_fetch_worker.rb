@@ -31,23 +31,20 @@ module ImageFetcher
 
     def process
       connection_ok, response = make_request
+      return(Result.new(false, url, response, ErrorCodes.connection_error)) unless connection_ok
 
-      if connection_ok && response.success?
+      if response.success?
         SaveFile.call(url: url,
                       output_directory: output_directory,
                       contents: response.body)
       else
-        Result.new(false, url, response, error_code(connection_ok))
+        Logger.log_error("url: #{url}; server resonded with: #{response.status}")
+        Result.new(false, url, response, ErrorCodes.fail_response)
       end
     end
 
     def make_request
-      conn = Faraday.new(url, request: { timeout: 5 }) do |faraday|
-        # NOTE: the default value for follow-redirects limit is 3
-        # TODO: need to find out what happens in case of 'too many redirects' -
-        #       what exception will it be ?
-        faraday.use ::FaradayMiddleware::FollowRedirects
-      end
+      conn = Faraday.new(url, request: { timeout: 5 })
       [true, conn.get]
     rescue *connection_exceptions => e
       # TODO: of course the user needs to see better formatted error message
@@ -59,8 +56,7 @@ module ImageFetcher
     def connection_exceptions
       [Faraday::SSLError,
        Faraday::ConnectionFailed,
-       Faraday::TimeoutError,
-       FaradayMiddleware::RedirectLimitReached]
+       Faraday::TimeoutError]
     end
 
     def invalid_url_result

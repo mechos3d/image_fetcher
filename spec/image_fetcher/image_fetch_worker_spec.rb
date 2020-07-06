@@ -49,9 +49,7 @@ RSpec.describe ImageFetcher::ImageFetchWorker do
     end
   end
 
-  # NOTE: behavior with codes 301, 302, 303 and 307 is not tested because
-  # it is covered by the FaradayMiddleware::FollowRedirects
-  [300, 400, 500].each do |stub_code|
+  [300, 301, 302, 303, 307, 400, 404, 500].each do |stub_code|
     context "when response was not successfull with http_code #{stub_code}" do
       before do
         stub_request(:get, url).to_return(status: stub_code, body: 'stub_body', headers: {})

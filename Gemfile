@@ -6,7 +6,6 @@ ruby '~> 2.7'
 
 gem 'concurrent-ruby', require: 'concurrent'
 gem 'faraday'
-gem 'faraday_middleware'
 
 group :development, :test do
   gem 'pry'
