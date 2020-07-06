@@ -6,7 +6,7 @@ RSpec.describe ImageFetcher::CliEntrypoint do
   let(:described_instance) do
     described_class.new(argv: argv, argf: argf, stdout: stdout, stderr: stderr)
   end
-  let(:argument) { './some/dir' }
+  let(:argument) { './tmp/some/dir' }
   let(:urls_raw_contents) do
     ["   https://foo/bar1.jpg   \n",
      "  https://foo/bar2.jpg \n"]

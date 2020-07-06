@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative '../lib/image_fetcher.rb'
+require_relative './spec_utils.rb'
 
 ImageFetcher::APPLICATION_ROOT_DIR = File.expand_path("#{File.dirname(__FILE__)}/..")
 

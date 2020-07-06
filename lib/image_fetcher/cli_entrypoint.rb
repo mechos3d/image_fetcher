@@ -3,6 +3,7 @@
 module ImageFetcher
   class CliEntrypoint
     EXIT_CODES = {
+      success: 0,
       one_of_input_files_doesnt_exist: 1,
       failed_results_present: 2
     }.freeze
@@ -23,7 +24,9 @@ module ImageFetcher
       results = MainProcessor.call(urls: urls, output_directory: output_directory)
 
       stdout.puts OutputReportGenerator.call(results)
-      exit(EXIT_CODES[:failed_results_present]) unless results.all?(&:success)
+
+      exit_code = results.all?(&:success) ? :success : :failed_results_present
+      exit(EXIT_CODES.fetch(exit_code))
     end
 
     private

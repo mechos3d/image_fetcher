@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 RSpec.describe ImageFetcher::Utils do
-
   describe '.filename_from_url' do
     let(:url1) { 'https://foo.com/ii/foo.jpg' }
 
@@ -41,7 +40,8 @@ RSpec.describe ImageFetcher::Utils do
       'https://foo.com/bar.jpg',
       'https://foo.com/bar',
       'https://foo.com/bar#stuff',
-      'https://foo.com/bar?param1=1&params2=1']
+      'https://foo.com/bar?param1=1&params2=1'
+    ]
 
     valid_urls.each do |url|
       context "when given a valid url: #{url}" do
