@@ -2,6 +2,11 @@
 
 module ImageFetcher
   class CliEntrypoint
+    EXIT_CODES = {
+      input_file_doesnt_exist: 1,
+      failed_results_present: 2
+    }.freeze
+    private_constant :EXIT_CODES
 
     def initialize(argv: ARGV, argf: ARGF, stdout: STDOUT, stderr: STDERR)
       @argv   = argv
@@ -24,7 +29,7 @@ module ImageFetcher
       results = MainProcessor.call(urls: urls, output_directory: output_directory)
 
       stdout.puts OutputReportGenerator.call(results)
-      exit(2) unless results.all?(&:success)
+      exit(EXIT_CODES[:failed_results_present]) unless results.all?(&:success)
     end
 
     private
@@ -35,8 +40,9 @@ module ImageFetcher
     def check_input_file_exists
       file = argv.first
       return if File.exist?(File.absolute_path(file))
+
       stderr.puts "No such file: #{file}"
-      exit(1)
+      exit(EXIT_CODES[:failed_results_present])
     end
   end
 end

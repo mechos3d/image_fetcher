@@ -28,6 +28,7 @@ module ImageFetcher
         false, url, nil, worker_class::ErrorCodes.file_already_exists
       )
     end
+
     # TODO: For usability it can be better to create a separate directory
     # for each domain and save files there.
 
@@ -35,13 +36,7 @@ module ImageFetcher
     # to shorten the name itself here if needed:
     # (uniqeness will still be provided by the MD5 hash)
     def filepath
-      @filepath ||= File.join(output_directory, filename)
-    end
-
-    # TODO: need a spec on the 'uniqueness' behavior:
-    def filename
-      name = url.split('/').last
-      [Digest::MD5.hexdigest(url), name].join('__')
+      @filepath ||= File.join(output_directory, Utils.filename_from_url(url))
     end
 
     def worker_class

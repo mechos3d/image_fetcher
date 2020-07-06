@@ -8,7 +8,7 @@ module ImageFetcher
 
     def initialize(urls:, output_directory:)
       # TODO: add specs on this class' behavior when urls are not uniq:
-      @urls = urls.uniq
+      @urls             = urls.uniq
       @output_directory = output_directory
     end
 
@@ -33,8 +33,9 @@ module ImageFetcher
     private
 
     def create_directory
-      # TODO: check for FS permissions here.
-      # (what if the directory exists but current user doesn't have permissions for it)
+      # TODO: rescue Errno::EPERM
+      # (if current user doesn't have permissions for this operation)
+      # TODO: then move this method to 'cli_entrypoint'
       FileUtils.mkdir_p(output_directory)
     end
 
