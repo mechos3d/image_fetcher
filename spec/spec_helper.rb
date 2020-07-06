@@ -1,5 +1,9 @@
 # frozen_string_literal: true
 
+module ImageFetcher
+  ENVIRONMENT = :test
+end
+
 require_relative '../lib/image_fetcher.rb'
 require_relative './spec_utils.rb'
 

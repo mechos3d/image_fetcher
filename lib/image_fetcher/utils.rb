@@ -17,10 +17,9 @@ module ImageFetcher
     # https://github.com/perfectline/validates_url/blob/master/lib/validate_url.rb
     # but currently it has ActiveModel as dependency and it's unnecessary here in my opinion.
     #
-    # NOTE: this method cannot fully guarantee the URI validity, so there still
-    # is a possibilty of raising InvalidURIError while performing the request itself
-
-    # TODO: add specs:
+    # NOTE: this method cannot fully guarantee the URI validity,
+    # the vast majority of invalid cases will raise InvalidURIError while performing
+    # the request itself, so it has to be rescued there too.
     def self.valid_url?(url)
       parsed = URI.parse(url)
       parsed.is_a?(URI::HTTPS) || parsed.is_a?(URI::HTTP)

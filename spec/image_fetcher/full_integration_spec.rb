@@ -4,7 +4,7 @@ RSpec.describe ImageFetcher::CliEntrypoint do
   subject(:class_call) { described_instance.call }
 
   let(:described_instance) do
-    described_class.new(argv: argv, argf: argf, stdout: stdout, stderr: stderr)
+    described_class.new(argv: argv, argf: argf)
   end
   let(:argument) { './tmp/full_integration_spec_out_directory' }
 
@@ -16,16 +16,6 @@ RSpec.describe ImageFetcher::CliEntrypoint do
   let(:argf) do
     double.tap do |argf_double|
       allow(argf_double).to receive(:readlines).and_return(urls_raw_contents)
-    end
-  end
-  let(:stdout) do
-    double.tap do |stdout_double|
-      allow(stdout_double).to receive(:puts)
-    end
-  end
-  let(:stderr) do
-    double.tap do |stderr|
-      allow(stderr).to receive(:puts)
     end
   end
   after do
@@ -51,6 +41,7 @@ RSpec.describe ImageFetcher::CliEntrypoint do
 
       ImageFetcher::SpecUtils.clean_tmp_out_directory(argument)
       allow(described_instance).to receive(:exit)
+      allow(ImageFetcher::Logger).to receive(:log)
     end
 
     it 'creates files with right contents' do
@@ -64,7 +55,7 @@ RSpec.describe ImageFetcher::CliEntrypoint do
 
     it 'returns report to user' do
       class_call
-      expect(stdout).to have_received(:puts).with(
+      expect(ImageFetcher::Logger).to have_received(:log).with(
         <<~REPORT
           Total number of unique urls: 3,
           Successfully downloaded: 3,
@@ -94,6 +85,7 @@ RSpec.describe ImageFetcher::CliEntrypoint do
 
       ImageFetcher::SpecUtils.clean_tmp_out_directory(argument)
       allow(described_instance).to receive(:exit)
+      allow(ImageFetcher::Logger).to receive(:log)
     end
 
     it 'creates the files for which the request was successfull' do
@@ -107,7 +99,7 @@ RSpec.describe ImageFetcher::CliEntrypoint do
 
     it 'returns report to user' do
       class_call
-      expect(stdout).to have_received(:puts).with(
+      expect(ImageFetcher::Logger).to have_received(:log).with(
         <<~REPORT
           Total number of unique urls: 2,
           Successfully downloaded: 1,

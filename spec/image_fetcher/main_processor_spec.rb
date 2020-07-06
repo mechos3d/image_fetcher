@@ -44,4 +44,18 @@ RSpec.describe ImageFetcher::MainProcessor do
       end
     end
   end
+
+  context 'when urls in the input are duplicated' do
+    let(:url1) { 'https://foo.com' }
+    let(:url2) { 'https://foo.com' }
+    let(:urls) { [url1, url2] }
+
+    it 'calls ImageFetchWorker only once for each url' do
+      class_call
+      expect(ImageFetcher::ImageFetchWorker).to(
+        have_received(:call).with(url: url1, output_directory: output_directory)
+                            .exactly(1).time
+      )
+    end
+  end
 end

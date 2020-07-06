@@ -11,6 +11,7 @@ RSpec.describe ImageFetcher::Utils do
     end
 
     context 'for files with the same domain and name but different filepath' do
+      let(:url1) { 'https://foo.com/ii/foo.jpg' }
       let(:url2) { 'https://foo.com/iiiiiii/foo.jpg' }
 
       it 'returns different filenames' do
@@ -22,6 +23,7 @@ RSpec.describe ImageFetcher::Utils do
     end
 
     context 'for files from different domains but the same filepath' do
+      let(:url1) { 'https://foo.com/ii/foo.jpg' }
       let(:url2) { 'https://barbar.com/ii/foo.jpg' }
 
       it 'returns different filenames' do

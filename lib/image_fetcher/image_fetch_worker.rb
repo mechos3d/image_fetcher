@@ -21,7 +21,7 @@ module ImageFetcher
       # NOTE: See comments on the 'Utils.valid_url?' for more info.
       invalid_url_result
     rescue StandardError => e
-      # TODO: can write to stderr from here
+      Logger.log_error("url: #{url}; #{e.message}")
       Result.new(false, url, e, ErrorCodes.unhandled_exception)
     end
 
@@ -44,14 +44,27 @@ module ImageFetcher
     def make_request
       conn = Faraday.new(url, request: { timeout: 5 }) do |faraday|
         # NOTE: the default value for follow-redirects limit is 3
+        # TODO: need to find out what happens in case of 'too many redirects' -
+        #       what exception will it be ?
         faraday.use ::FaradayMiddleware::FollowRedirects
       end
       [true, conn.get]
-    rescue Faraday::SSLError, Faraday::ConnectionFailed, Faraday::TimeoutError => e
+    rescue *connection_exceptions => e
+      # TODO: of course the user needs to see better formatted error message
+      # not the names of Faraday exception classes:
+      Logger.log_error("url: #{url}; connection error: #{e.class}")
       [false, e]
     end
 
+    def connection_exceptions
+      [Faraday::SSLError,
+       Faraday::ConnectionFailed,
+       Faraday::TimeoutError,
+       FaradayMiddleware::RedirectLimitReached]
+    end
+
     def invalid_url_result
+      Logger.log_error("Invalid url: #{url}")
       Result.new(false, url, nil, ErrorCodes.invalid_url)
     end
 

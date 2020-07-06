@@ -24,6 +24,7 @@ module ImageFetcher
     attr_reader :url, :output_directory, :contents
 
     def failed_result
+      ImageFetcher::Logger.log_error("url: #{url}; File '#{filepath}' already exists")
       worker_class::Result.new(
         false, url, nil, worker_class::ErrorCodes.file_already_exists
       )

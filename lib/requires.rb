@@ -8,6 +8,7 @@ require 'faraday_middleware'
 require 'concurrent'
 
 require_relative './image_fetcher.rb'
+require_relative './image_fetcher/logger.rb'
 require_relative './image_fetcher/utils.rb'
 require_relative './image_fetcher/save_file.rb'
 require_relative './image_fetcher/image_fetch_worker/error_codes.rb'

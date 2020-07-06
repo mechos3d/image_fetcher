@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-# TODO: add a spec for this whole class:
 module ImageFetcher
   class OutputReportGenerator
     def self.call(*args)

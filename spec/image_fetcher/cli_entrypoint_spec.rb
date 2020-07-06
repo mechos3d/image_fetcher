@@ -4,7 +4,7 @@ RSpec.describe ImageFetcher::CliEntrypoint do
   subject(:class_call) { described_instance.call }
 
   let(:described_instance) do
-    described_class.new(argv: argv, argf: argf, stdout: stdout, stderr: stderr)
+    described_class.new(argv: argv, argf: argf)
   end
   let(:argument) { './tmp/some/dir' }
   let(:urls_raw_contents) do
@@ -26,16 +26,6 @@ RSpec.describe ImageFetcher::CliEntrypoint do
       allow(argf_double).to receive(:readlines).and_return(urls_raw_contents)
     end
   end
-  let(:stdout) do
-    double.tap do |stdout_double|
-      allow(stdout_double).to receive(:puts)
-    end
-  end
-  let(:stderr) do
-    double.tap do |stderr|
-      allow(stderr).to receive(:puts)
-    end
-  end
 
   before do
     allow(described_instance).to receive(:exit)
@@ -44,7 +34,7 @@ RSpec.describe ImageFetcher::CliEntrypoint do
   end
 
   context 'when argument is a relative path to directory' do
-    let(:argument) { './some/dir' }
+    let(:argument) { './tmp/some/dir' }
 
     it 'calls main processor' do
       class_call
@@ -56,7 +46,7 @@ RSpec.describe ImageFetcher::CliEntrypoint do
   end
 
   context 'when argument is an absolute path to directory' do
-    let(:argument) { '/some/dir' }
+    let(:argument) { '/tmp/some/dir' }
 
     it 'calls main processor' do
       class_call
@@ -64,6 +54,23 @@ RSpec.describe ImageFetcher::CliEntrypoint do
         urls: expected_urls,
         output_directory: argument
       )
+    end
+  end
+
+  context 'when input file doesn\'t exist' do
+    let(:argf) do
+      double.tap do |argf_double|
+        allow(argf_double).to receive(:readlines).and_raise(Errno::ENOENT)
+      end
+    end
+
+    it 'exits with non-zero exit_code(1) and logs to STDERR' do
+      allow(ImageFetcher::Logger).to receive(:log_error)
+      class_call
+      aggregate_failures do
+        expect(ImageFetcher::Logger).to have_received(:log_error).with('No such file or directory')
+        expect(described_instance).to have_received(:exit).with(1)
+      end
     end
   end
 end

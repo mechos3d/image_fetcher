@@ -7,7 +7,6 @@ module ImageFetcher
     end
 
     def initialize(urls:, output_directory:)
-      # TODO: add specs on this class' behavior when urls are not uniq:
       @urls             = urls.uniq
       @output_directory = output_directory
     end
@@ -22,15 +21,18 @@ module ImageFetcher
       end
 
       futures.each(&:execute)
-      # TODO: in case of some internal errors - 'value' will be nil and the future.reason
-      # is to be checked (and written to stderr)
+      futures.each do |future|
+        # NOTE: in case of some unhandled exception that occured inside a 'Future' -
+        # it will have 'nil' as a '.value' and an instance of Error as a '.reason':
+        (error = future.reason) && Logger.log_error(error.to_s)
+      end
       futures.map(&:value)
     end
 
     private
 
     def thread_pool
-      # TODO: can make thread_pool settings configurable with flags from command-line:
+      # TODO: make thread_pool settings configurable with flags from command-line:
       Concurrent::ThreadPoolExecutor.new(
         min_threads: 5,
         max_threads: 50,
@@ -39,9 +41,9 @@ module ImageFetcher
     end
 
     def create_directory
-      # TODO: rescue Errno::EPERM
-      # (if current user doesn't have permissions for this operation)
-      # TODO: then move this method to 'cli_entrypoint'
+      # TODO: move the directory creation to 'cli_entrypoint',
+      # rescue Errno::EPERM (if current user doesn't have permissions for this operation)
+      # and print message to STDERR.
       FileUtils.mkdir_p(output_directory)
     end
 
