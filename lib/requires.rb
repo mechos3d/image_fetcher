@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'uri'
+require 'digest'
 require 'fileutils'
 require 'faraday'
 require 'faraday_middleware'

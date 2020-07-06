@@ -39,7 +39,6 @@ RSpec.describe ImageFetcher::CliEntrypoint do
 
   before do
     allow(described_instance).to receive(:exit)
-    allow(described_instance).to receive(:check_input_file_exists)
     allow(ImageFetcher::MainProcessor).to receive(:call).and_return([])
     allow(ImageFetcher::OutputReportGenerator).to receive(:call)
   end

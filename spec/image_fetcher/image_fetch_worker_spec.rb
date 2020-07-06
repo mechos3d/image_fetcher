@@ -70,14 +70,31 @@ RSpec.describe ImageFetcher::ImageFetchWorker do
   end
 
   context 'when given invalid url' do
-    let(:url) { 'ttps://foo' }
-    it do
-      result = class_call
-      aggregate_failures do
-        expect(result.success).to be false
-        expect(result.url).to eq(url)
-        expect(result.details).to eq(nil)
-        expect(result.error_code).to eq(:invalid_url)
+    context 'with wrong protocol' do
+      let(:url) { 'ttps://foo.com' }
+      it do
+        result = class_call
+        aggregate_failures do
+          expect(result.success).to be false
+          expect(result.url).to eq(url)
+          expect(result.details).to eq(nil)
+          expect(result.error_code).to eq(:invalid_url)
+        end
+      end
+    end
+
+    context 'when http-client throws URI::InvalidURIError' do
+      let(:url) { 'https://----' }
+      before { stub_request(:get, url).to_raise(URI::InvalidURIError) }
+
+      it do
+        result = class_call
+        aggregate_failures do
+          expect(result.success).to be false
+          expect(result.url).to eq(url)
+          expect(result.details).to eq(nil)
+          expect(result.error_code).to eq(:invalid_url)
+        end
       end
     end
   end

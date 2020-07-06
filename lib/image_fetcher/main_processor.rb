@@ -20,7 +20,10 @@ module ImageFetcher
           ImageFetchWorker.call(url: url, output_directory: output_directory)
         end
       end
+
       futures.each(&:execute)
+      # TODO: in case of some internal errors - 'value' will be nil and the future.reason
+      # is to be checked (and written to stderr)
       futures.map(&:value)
     end
 
