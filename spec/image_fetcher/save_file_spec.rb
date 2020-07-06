@@ -24,7 +24,7 @@ RSpec.describe ImageFetcher::SaveFile do
   it 'creates a file with right contents' do
     class_call
     aggregate_failures do
-      expect(File.exists?(out_file_path)).to be true
+      expect(File.exist?(out_file_path)).to be true
       expect(File.read(out_file_path)).to eq(contents)
     end
   end
@@ -32,7 +32,7 @@ RSpec.describe ImageFetcher::SaveFile do
   context 'when file with the same name already exists' do
     before { FileUtils.touch(out_file_path) }
 
-    it "returns Result with error details" do
+    it 'returns Result with error details' do
       result = class_call
       aggregate_failures do
         expect(result.success).to be false

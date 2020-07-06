@@ -3,7 +3,7 @@
 RSpec.describe ImageFetcher::MainProcessor do
   subject(:class_call) do
     described_class.call(urls: urls,
-                        output_directory: output_directory)
+                         output_directory: output_directory)
   end
 
   let(:urls) { [url1, url2] }

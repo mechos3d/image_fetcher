@@ -15,22 +15,25 @@ module ImageFetcher
     def call
       create_directory
 
-      pool = Concurrent::ThreadPoolExecutor.new(
-         min_threads: 5,
-         max_threads: 50,
-         max_queue: 0
-      )
-
       futures = urls.map do |url|
-        Concurrent::Future.new(executor: pool) do
+        Concurrent::Future.new(executor: thread_pool) do
           ImageFetchWorker.call(url: url, output_directory: output_directory)
         end
       end
-      futures.each { |future| future.execute }
-      futures.map { |future| future.value }
+      futures.each(&:execute)
+      futures.map(&:value)
     end
 
     private
+
+    def thread_pool
+      # TODO: can make thread_pool settings configurable with flags from command-line:
+      Concurrent::ThreadPoolExecutor.new(
+        min_threads: 5,
+        max_threads: 50,
+        max_queue: 0
+      )
+    end
 
     def create_directory
       # TODO: rescue Errno::EPERM

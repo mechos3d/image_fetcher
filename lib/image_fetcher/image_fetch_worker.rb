@@ -16,19 +16,8 @@ module ImageFetcher
     def call
       return invalid_url_result unless Utils.valid_url?(url)
 
-      connection_ok, response = make_request
-
-      if connection_ok && response.success?
-        return(
-          SaveFile.call(url: url,
-                        output_directory: output_directory,
-                        contents: response.body)
-        )
-      end
-
-      error_code = connection_ok ? ErrorCodes.fail_response : ErrorCodes.connection_error
-      Result.new(false, url, response, error_code)
-    rescue URI::InvalidURIError => e
+      process
+    rescue URI::InvalidURIError
       # NOTE: See comments on the 'Utils.valid_url?' for more info.
       invalid_url_result
     rescue StandardError => e
@@ -39,6 +28,18 @@ module ImageFetcher
     private
 
     attr_reader :url, :output_directory
+
+    def process
+      connection_ok, response = make_request
+
+      if connection_ok && response.success?
+        SaveFile.call(url: url,
+                      output_directory: output_directory,
+                      contents: response.body)
+      else
+        Result.new(false, url, response, error_code(connection_ok))
+      end
+    end
 
     def make_request
       conn = Faraday.new(url, request: { timeout: 5 }) do |faraday|
@@ -52,6 +53,10 @@ module ImageFetcher
 
     def invalid_url_result
       Result.new(false, url, nil, ErrorCodes.invalid_url)
+    end
+
+    def error_code(connection_ok)
+      connection_ok ? ErrorCodes.fail_response : ErrorCodes.connection_error
     end
   end
 end

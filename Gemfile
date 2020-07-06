@@ -4,13 +4,13 @@ source 'https://rubygems.org'
 
 ruby '~> 2.7'
 
+gem 'concurrent-ruby', require: 'concurrent'
 gem 'faraday'
 gem 'faraday_middleware'
-gem 'concurrent-ruby', require: 'concurrent'
 
 group :development, :test do
   gem 'pry'
   gem 'rspec', '~> 3.9'
-  gem 'webmock'
   gem 'rubocop'
+  gem 'webmock'
 end

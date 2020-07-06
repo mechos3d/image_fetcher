@@ -51,7 +51,7 @@ RSpec.describe ImageFetcher::CliEntrypoint do
       class_call
       expect(ImageFetcher::MainProcessor).to have_received(:call).with(
         urls: expected_urls,
-        output_directory: expected_output_dir,
+        output_directory: expected_output_dir
       )
     end
   end
@@ -63,7 +63,7 @@ RSpec.describe ImageFetcher::CliEntrypoint do
       class_call
       expect(ImageFetcher::MainProcessor).to have_received(:call).with(
         urls: expected_urls,
-        output_directory: argument,
+        output_directory: argument
       )
     end
   end

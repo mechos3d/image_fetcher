@@ -37,7 +37,7 @@ RSpec.describe ImageFetcher::ImageFetchWorker do
         expect { class_call }.not_to raise_error
       end
 
-      it "returns Result with error details" do
+      it 'returns Result with error details' do
         result = class_call
         aggregate_failures do
           expect(result.success).to be false
@@ -57,7 +57,7 @@ RSpec.describe ImageFetcher::ImageFetchWorker do
         stub_request(:get, url).to_return(status: stub_code, body: 'stub_body', headers: {})
       end
 
-      it "returns Result with error details" do
+      it 'returns Result with error details' do
         result = class_call
         aggregate_failures do
           expect(result.success).to be false
